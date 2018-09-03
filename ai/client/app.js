@@ -6,6 +6,6 @@ App({
     });
   },
   globalData: {
-    blog: {}
+    namecard: {}
   }
 });

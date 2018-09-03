@@ -37,11 +37,11 @@ Page({
   },
 
   /**
-   * 跳转至文章详情
+   * 跳转至名片详情
    */
   getDetail(e) {
-    let _id = e.currentTarget.dataset.blogid;
-    app.globalData.blog.id = _id;
+    let _id = e.currentTarget.dataset.namecardid;
+    app.globalData.namecard.id = _id;
 
     wx.navigateTo({
       url: '../detail/index'

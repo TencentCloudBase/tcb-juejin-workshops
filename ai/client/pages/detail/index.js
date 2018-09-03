@@ -11,17 +11,17 @@ Page({
   },
 
   onLoad: function () {
-    this.getBlogDetail();
+    this.getNameCardDetail();
   },
 
   /**
-   * 获取文章详情
+   * 获取名片详情
    */
-  getBlogDetail() {
+  getNameCardDetail() {
     // 初始化db
     const db = wx.cloud.database({});
-    let blogId = app.globalData.blog.detailId;
-    db.collection('namecard').doc(blogId).get().then(res => {
+    let ncId = app.globalData.namecard.id;
+    db.collection('namecard').doc(ncId).get().then(res => {
       console.log('db读取成功', res.data);
       let data = res.data;
 

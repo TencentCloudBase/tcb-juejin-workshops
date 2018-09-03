@@ -167,7 +167,7 @@ Page({
       console.log(res);
       wx.hideLoading();
 
-      app.globalData.blog.id = res._id;
+      app.globalData.namecard.id = res._id;
 
       wx.navigateTo({
         url: '../detail/index'

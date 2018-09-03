@@ -1,5 +1,5 @@
 <view class="container">
-  <view class="idcard-item" wx:for="{{list}}" wx:key="*this" ontap="getDetail" data-blogid="{{item._id}}">
+  <view class="idcard-item" wx:for="{{list}}" wx:key="*this" ontap="getDetail" data-namecardid="{{item._id}}">
     <view class="idcard-image">
       <image src="{{item.cover}}"></image>
     </view>
