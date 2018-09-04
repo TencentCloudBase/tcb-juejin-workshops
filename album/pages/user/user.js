@@ -57,7 +57,7 @@ Page({
 
             this.addUser(app.globalData.userInfo)
 
-            wx.switchTab({ url: '/pages/index/index' })
+            // wx.switchTab({ url: '/pages/index/index' })
         }
     },
 
@@ -67,15 +67,7 @@ Page({
             return
         }
 
-        const db = wx.cloud.database({})
-        let result = await db.collection('user').add({
-            data: {
-                nickName: user.nickName,
-                albums: []
-            }
-        })
-
-        console.log(result)
+        // 在此插入储存用户代码
 
         app.globalData.nickName = user.nickName
         app.globalData.id = result._id

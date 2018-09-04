@@ -63,10 +63,7 @@ Page({
 
     // 上传图片
     uploadPhoto (filePath) {
-        return wx.cloud.uploadFile({
-            cloudPath: `${Date.now()}-${Math.floor(Math.random(0, 1) * 10000000)}.png`,
-            filePath
-        })
+        // 在此插入上传图片代码
     },
 
     // 预览图片
@@ -102,14 +99,6 @@ Page({
 
         app.globalData.allData.albums[this.data.albumIndex].photos = [...oldPhotos, ...albumPhotos]
 
-        // 写入集合
-        db.collection('user').doc(app.globalData.id).update({
-            data: {
-                albums: db.command.set(app.globalData.allData.albums)
-            }
-        }).then(result => {
-            console.log('写入成功', result)
-            wx.navigateBack()
-        })
+        // 在此插入储存图片信息代码
     }
 })
