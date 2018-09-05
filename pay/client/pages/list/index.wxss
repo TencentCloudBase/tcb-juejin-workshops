@@ -1,0 +1,27 @@
+.good-item {
+  display: flex;
+  width: 100%;
+  padding: 10px;
+  border-bottom: 1px solid #eee;
+}
+
+.good-image > image {
+  width: 150px;
+  height: 100px;
+  border: 1px solid #eee;
+}
+
+.good-image {
+  padding-left: 10px;
+}
+
+.good-detail {
+  font-size: 14px;
+  margin-left: 10px;
+}
+
+.button {
+  margin-top: 5px;
+  height: 30px;
+  font-size: 12px;
+}

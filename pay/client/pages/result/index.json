@@ -1,0 +1,7 @@
+{
+    "usingComponents": {
+      "pay-component": "/components/pay"
+    },
+    "navigationBarTitleText": "订单查询结果"
+  }
+  

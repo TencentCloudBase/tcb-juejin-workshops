@@ -1,0 +1,42 @@
+page,
+.container {
+  height: 100%;
+}
+
+.weui-form-preview {
+  min-height: 100%;
+}
+
+.list-item {
+  display: flex;
+  font-size: 14px;
+  justify-content: space-between;
+}
+
+.paid {
+  color: green;
+  font-size: 14px;
+}
+
+.not {
+  color: red;
+  font-size: 14px;
+}
+
+.closed {
+  color: slategrey;
+  font-size: 14px;
+}
+
+.empty {
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 0;
+  bottom: 0;
+  margin: auto;
+  text-align: center;
+  border: none;
+  height: 14px;
+  font-size: 14px;
+}

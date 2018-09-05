@@ -1,0 +1,3 @@
+**/node_modules
+.DS_Store
+cloud/functions/**/config/index.js

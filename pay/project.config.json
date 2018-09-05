@@ -1,0 +1,55 @@
+{
+	"description": "tcb 微信支付 DEMO",
+	"packOptions": {
+		"ignore": []
+	},
+	"setting": {
+		"urlCheck": false,
+		"es6": true,
+		"postcss": true,
+		"minified": true,
+		"newFeature": true
+	},
+	"compileType": "miniprogram",
+	"libVersion": "2.2.5",
+	"appid": "wx0df19af0220bd189",
+	"projectname": "pay-workshop",
+	"miniprogramRoot": "client",
+	"cloudfunctionRoot": "./cloud/functions",
+	"isGameTourist": false,
+	"condition": {
+		"search": {
+			"current": -1,
+			"list": []
+		},
+		"conversation": {
+			"current": -1,
+			"list": []
+		},
+		"plugin": {
+			"current": -1,
+			"list": []
+		},
+		"game": {
+			"currentL": -1,
+			"list": []
+		},
+		"miniprogram": {
+			"current": 1,
+			"list": [
+				{
+					"id": -1,
+					"name": "query",
+					"pathName": "pages/list/index",
+					"query": ""
+				},
+				{
+					"id": 1,
+					"name": "列表",
+					"pathName": "pages/queryorder/index",
+					"query": ""
+				}
+			]
+		}
+	}
+}

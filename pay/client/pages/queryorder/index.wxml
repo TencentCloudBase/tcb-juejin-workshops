@@ -1,0 +1,37 @@
+<view class="container">
+<view  class="weui-form-preview">
+    <view 
+      class="empty"
+      wx:if="{{!historyorders.length}}"
+    >
+      暂无订单
+    </view>
+    <view
+      class="weui-form-preview__hd"
+      wx:for="{{historyorders}}"
+      data-order="{{item.out_trade_no}}" 
+      wx:key="{{item}}"
+      bindtap="queryorder"
+    >
+        <view
+          class="{{index.transform(item.status).class}}"
+        >
+          {{index.transform(item.status).name}}
+        </view>
+        <view class="list-item" >
+          <text>订单号</text>
+          <text class="text">{{item.out_trade_no}}</text>
+        </view>
+        <view class="list-item" >
+          <text>商品</text>
+          <text class="text">{{item.body}}</text>
+        </view>
+    </view>
+</view>
+
+<wxs src="./index.wxs" module="index" />
+</view>
+
+
+
+

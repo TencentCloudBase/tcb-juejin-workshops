@@ -1,0 +1,31 @@
+{
+  "pages": [
+    "pages/list/index",
+    "pages/unifiedorder/index",
+    "pages/queryorder/index",
+    "pages/result/index"
+  ],
+  "window": {
+    "backgroundTextStyle": "light",
+    "navigationBarBackgroundColor": "#fff",
+    "navigationBarTitleText": "WeChat",
+    "navigationBarTextStyle": "black"
+  },
+  "tabBar": {
+    "selectedColor":"#d81e06",
+    "list": [
+      {
+        "pagePath": "pages/list/index",
+        "text": "商品",
+        "iconPath":"./img/cart.png",
+        "selectedIconPath":"./img/cart1.png"
+      },
+      {
+        "pagePath": "pages/queryorder/index",
+        "text": "订单",
+        "iconPath":"./img/search.png",
+        "selectedIconPath":"./img/search1.png"
+      }
+    ]
+  }
+}

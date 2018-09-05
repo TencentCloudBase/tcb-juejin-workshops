@@ -1,0 +1,9 @@
+.button{
+    width:373rpx;
+    margin:40rpx;   
+}
+.block{
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
