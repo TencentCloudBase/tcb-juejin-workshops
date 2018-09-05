@@ -10,9 +10,17 @@
 
 ## 效果预览
 
-![](https://ask.qcloudimg.com/draft/1011618/6fhdcxsm9f.png)
+<p align="center">
+<img 
+width="500px"
+src="https://ask.qcloudimg.com/draft/1011618/6fhdcxsm9f.png">
+</p>
 
-![](https://ask.qcloudimg.com/draft/1011618/hk5mp3mxrw.png)
+<p align="center">
+<img 
+width="500px"
+src="https://ask.qcloudimg.com/draft/1011618/hk5mp3mxrw.png">
+</p>
 
 ## 知识点
 
@@ -28,29 +36,58 @@
 
 打开微信开发者工具，创建一个新的小程序项目，项目目录选择个人相册Demo的目录，AppID填写已经申请公测资格的小程序对应的AppID。
 
-![](https://ask.qcloudimg.com/draft/1011618/1jli9xadu7.png)
+<p align="center">
+<img 
+width="350px"
+src="https://ask.qcloudimg.com/draft/1011618/1jli9xadu7.png">
+</p>
 
 ### 开通云开发环境
 
 1. 点击开发者工具上的【云开发】按钮
-![](https://ask.qcloudimg.com/draft/1011618/lfv9o5x8t0.png)
+<p align="center">
+<img 
+width="350px"
+src="https://ask.qcloudimg.com/draft/1011618/lfv9o5x8t0.png">
+</p>
 
 2. 点击【同意】
-![](https://ask.qcloudimg.com/draft/1011618/y0k8a5wf5j.png)
+<p align="center">
+<img 
+width="350px"
+src="https://ask.qcloudimg.com/draft/1011618/y0k8a5wf5j.png">
+</p>
 
 3. 填写环境名称和环境ID，点击【确定】创建环境，即可进入云开发控制台。
-![](https://ask.qcloudimg.com/draft/1011618/hckntz9geo.png)
-![](https://ask.qcloudimg.com/draft/1011618/b4cup4esm1.png)
+<p align="center">
+<img 
+width="350px"
+src="https://ask.qcloudimg.com/draft/1011618/hckntz9geo.png">
+</p>
+
+<p align="center">
+<img 
+width="350px"
+src="https://ask.qcloudimg.com/draft/1011618/b4cup4esm1.png">
+</p>
 
 
 ### 创建数据库
 
 相册小程序会使用到云开发提供的数据库能力，数据库使用的是MongoDB，需要优先创建一个集合，方便之后使用。
 1. 打开云开发控制台，点击菜单栏中的【数据库】，然后点击左侧边栏的【添加集合】按钮
-![](https://ask.qcloudimg.com/draft/1011618/vnr13xjih7.png)
+<p align="center">
+<img 
+width="350px"
+src="https://ask.qcloudimg.com/draft/1011618/vnr13xjih7.png">
+</p>
 
 2. 输入集合名称 "namecard"，然后点击确定即可创建集合。
-![](https://ask.qcloudimg.com/draft/1011618/x4uwxtqg7y.png)
+<p align="center">
+<img 
+width="350px"
+src="https://ask.qcloudimg.com/draft/1011618/x4uwxtqg7y.png">
+</p>
 
 ## 任务二：上传名片
 
@@ -162,7 +199,11 @@ exports.main = async (event) => {
 
 3. 上传云函数
 在微信开发者工具中，右键点击云函数 `parseNameCard`，选取好环境后，上传云函数（如果是新建，会显示`上传并创建`）。
-![](https://ask.qcloudimg.com/draft/1011618/70fpehld1i.png)
+<p align="center">
+<img 
+width="350px"
+src="https://ask.qcloudimg.com/draft/1011618/70fpehld1i.png">
+</p>
 
 4. 在小程序端调用云函数 `parseNameCard`
 将下面代码，输入到 `client/pages/index/index.js` 中的 `parseNameCard` 方法中，通过此方法，调用刚刚上传的云函数处理名片。

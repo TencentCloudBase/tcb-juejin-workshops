@@ -28,40 +28,7 @@ Page({
    * 调用接口解析名片
    */
   parseNameCard() {
-    wx.showLoading({
-      title: '解析名片',
-    });
-    wx.cloud.callFunction({
-      name: 'parseNameCard',
-      data: {
-        url: this.data.coverImage
-      }
-    }).then(res => {
-      // console.log(res);
-      if (res.code && res.result && res.result.data) {
-        wx.showToast({
-          title: '解析失败，请重试',
-          icon: 'none'
-        });
-        wx.hideLoading();
-        return;
-      }
-      
-      let data = this.transformMapping(res.result.data);
-      console.log(data);
-      this.setData({
-        formData: data
-      });
-
-      wx.hideLoading();
-    }).catch(err => {
-      console.error('解析失败，请重试。', err);
-      wx.showToast({
-        title: '解析失败，请重试',
-        icon: 'none'
-      });
-      wx.hideLoading();
-    });
+    
   },
 
   transformMapping(data) {
