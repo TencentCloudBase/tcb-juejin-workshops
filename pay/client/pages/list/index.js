@@ -25,37 +25,10 @@ Page({
   },
 
   async getGoodsList() {
-    const db = wx.cloud.database();
-    const result = await db.collection('goods').get();
-
-    let data = result.data || [];
-
-    this.setData({
-      goods: data
-    });
+    
   },
 
   async makeOrder(e) {
-
-    wx.showLoading({
-      title: '正在下单',
-    });
-
-    let id = e.target.dataset.goodid;
-    const { result } = await wx.cloud.callFunction({
-      name: 'pay',
-      data: {
-        type: 'unifiedorder',
-        data: {
-          goodId: id
-        }
-      }
-    });
-
-    const data = result.data;
-
-    wx.navigateTo({
-      url: `/pages/result/index?id=${data.out_trade_no}`
-    });
+    
   }
 })

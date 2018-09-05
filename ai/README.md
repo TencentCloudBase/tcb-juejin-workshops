@@ -3,7 +3,17 @@
 ## 准备工作
 
 1. 已经申请小程序，获取小程序 `AppID`
+在[小程序管理后台](mp.weixin.qq.com)中，[设置] -> [开发设置] 下可以获取微信小程序 `AppID`。
+<p align="center">
+<img src="https://ask.qcloudimg.com/draft/1011618/8i9zhagojv.png" width="600"/>
+</p>
+
 2. 腾讯云账号，获取腾讯云的 `APPID`, `SecretId` 和 `SecretKey`，([地址](https://console.cloud.tencent.com/cam/capi))
+
+<p align="center">
+<img src="https://ask.qcloudimg.com/draft/1011618/gepe0wbac3.png" width="600"/>
+</p>
+
 3. 微信开发者 `IDE`([下载](https://developers.weixin.qq.com/miniprogram/dev/devtools/beta.html))
 4. 下载名片识别小程序代码包
 5. 运行环境 `Node8.9` 或以上
@@ -30,11 +40,11 @@ src="https://ask.qcloudimg.com/draft/1011618/hk5mp3mxrw.png">
 
 ## 任务一：创建小程序·云开发环境
 
-**任务目标**: 创建小程序·云开发环境，用于后面储存相册的用户信息和照片。
+**任务目标**: 创建小程序·云开发环境，用于后面存储信息和开发云函数。
 
 ### 开发者工具创建项目 
 
-打开微信开发者工具，创建一个新的小程序项目，项目目录选择个人相册Demo的目录，AppID填写已经申请公测资格的小程序对应的AppID。
+打开微信开发者工具，创建一个新的小程序项目，项目目录选择名片小程序Demo的目录，AppID填写已经申请公测资格的小程序对应的AppID。
 
 <p align="center">
 <img 
@@ -74,7 +84,7 @@ src="https://ask.qcloudimg.com/draft/1011618/b4cup4esm1.png">
 
 ### 创建数据库
 
-相册小程序会使用到云开发提供的数据库能力，数据库使用的是MongoDB，需要优先创建一个集合，方便之后使用。
+名片小程序会使用到云开发提供的数据库能力，数据库使用的是MongoDB，需要优先创建一个集合，方便之后使用。
 1. 打开云开发控制台，点击菜单栏中的【数据库】，然后点击左侧边栏的【添加集合】按钮
 <p align="center">
 <img 
@@ -176,8 +186,18 @@ wx.cloud.getTempFileURL({
 ```bash
 npm i --production
 ```
+2. 填写腾讯云相关配置
+新建 `cloud/functions/parseNameCard/index.js`，并填入腾讯云的 `AppId`, `SecretId`, `SecretKey`:
 
-2. 在 `cloud/functions/parseNameCard/index.js` 文件底部，输入以下代码：
+```js
+module.exports = {
+  AppId: '',
+  SecretId: '',
+  SecretKey: ''
+};
+```
+
+3. 在 `cloud/functions/parseNameCard/index.js` 文件底部，输入以下代码：
 
 ```js
 const imgClient = new ImageClient({
@@ -197,7 +217,7 @@ exports.main = async (event) => {
 };
 ```
 
-3. 上传云函数
+4. 上传云函数
 在微信开发者工具中，右键点击云函数 `parseNameCard`，选取好环境后，上传云函数（如果是新建，会显示`上传并创建`）。
 <p align="center">
 <img 
@@ -205,7 +225,7 @@ width="350px"
 src="https://ask.qcloudimg.com/draft/1011618/70fpehld1i.png">
 </p>
 
-4. 在小程序端调用云函数 `parseNameCard`
+5. 在小程序端调用云函数 `parseNameCard`
 将下面代码，输入到 `client/pages/index/index.js` 中的 `parseNameCard` 方法中，通过此方法，调用刚刚上传的云函数处理名片。
 
 ```js
