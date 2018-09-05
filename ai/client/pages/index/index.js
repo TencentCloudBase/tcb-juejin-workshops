@@ -14,72 +14,14 @@ Page({
    * 上传文件
    */
   uploadFile: function () {
-    wx.chooseImage({
-      success: dRes => {
-
-        wx.showLoading({
-          title: '上传文件',
-        });
-
-        const uploadTask = wx.cloud.uploadFile({
-          cloudPath: `${Date.now()}-${Math.floor(Math.random(0, 1) * 10000000)}.png`,
-          filePath: dRes.tempFilePaths[0],
-          success: res => {
-            if (res.statusCode < 300) {
-              this.setData({
-                fileID: res.fileID,
-              }, () => {
-                this.getTempFileURL();
-              });
-            }
-          },
-          fail: err => {
-            wx.hideLoading();
-            wx.showToast({
-              title: '上传失败',
-              icon: 'none'
-            });
-          },
-        })
-      },
-      fail: console.error,
-    })
+    
   },
 
   /**
    * 获取图片链接
    */
   getTempFileURL: function () {
-    wx.cloud.getTempFileURL({
-      fileList: [{
-        fileID: this.data.fileID,
-      }],
-    }).then(res => {
-      console.log('获取成功', res)
-      let files = res.fileList;
-
-      if (files.length) {
-        this.setData({
-          coverImage: files[0].tempFileURL
-        }, () => {
-          this.parseNameCard();
-        });
-      }
-      else {
-        wx.showToast({
-          title: '获取图片链接失败',
-          icon: 'none'
-        });
-      }
-
-    }).catch(err => {
-      console.error('获取失败', err)
-      wx.showToast({
-        title: '获取图片链接失败',
-        icon: 'none'
-      });
-      wx.hideLoading();
-    })
+    
   },
 
   /**

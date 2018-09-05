@@ -9,7 +9,6 @@
   "author": "heyli",
   "license": "MIT",
   "dependencies": {
-    "tcb-admin-node": "^1.0.31",
     "image-node-sdk": "^1.0.4"
   }
 }
