@@ -27,56 +27,7 @@ Page({
    * 发起支付
    */
   pay() {
-    let orderQuery = this.data.order;
-    let out_trade_no = this.data.out_trade_no;
-    let _this = this;
-
-    const {
-      time_stamp,
-      nonce_str,
-      sign,
-      sign_type,
-      prepay_id,
-      body,
-      total_fee
-    } = orderQuery;
-
-    wx.requestPayment({
-      timeStamp: time_stamp,
-      nonceStr: nonce_str,
-      package: `prepay_id=${prepay_id}`,
-      signType: 'MD5',
-      paySign: sign,
-      async success(res) {
-        wx.showLoading({
-          title: '正在支付',
-        });
-
-        wx.showToast({
-          title: '支付成功',
-          icon: 'success',
-          duration: 1500,
-          async success() {
-            _this.getOrder();
-
-            await wx.cloud.callFunction({
-              name: 'pay',
-              data: {
-                type: 'payorder',
-                data: {
-                  body,
-                  prepay_id,
-                  out_trade_no,
-                  total_fee
-                }
-              }
-            });
-            wx.hideLoading();
-          }
-        });
-      },
-      fail: function (res) { }
-    })
+    
   },
 
   /**

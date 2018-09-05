@@ -186,8 +186,9 @@ wx.cloud.getTempFileURL({
 ```bash
 npm i --production
 ```
+
 2. 填写腾讯云相关配置
-新建 `cloud/functions/parseNameCard/index.js`，并填入腾讯云的 `AppId`, `SecretId`, `SecretKey`:
+新建 `cloud/functions/parseNameCard/config/index.js`，并填入腾讯云的 `AppId`, `SecretId`, `SecretKey`:
 
 ```js
 module.exports = {
