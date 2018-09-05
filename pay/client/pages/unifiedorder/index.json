@@ -1,7 +1,0 @@
-{
-    "usingComponents": {
-      "pay-component": "/components/pay"
-    },
-    "navigationBarTitleText": "统一下单"
-  }
-  
