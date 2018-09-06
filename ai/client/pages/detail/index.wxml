@@ -1,4 +1,3 @@
-<!--index.wxml-->
 <view class="container">  
     <view class="previewimg">  
         <image

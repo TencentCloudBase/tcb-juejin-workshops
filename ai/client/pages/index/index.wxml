@@ -1,4 +1,3 @@
-<!--index.wxml-->
 <view class="container">
 
   <image wx-if="{{fileID}}" class="namecard" src="{{fileID}}"></image>
