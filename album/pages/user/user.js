@@ -67,7 +67,15 @@ Page({
             return
         }
 
-        // 在此插入储存用户代码
+        // 获取数据库实例例
+        const db = wx.cloud.database({})
+        // 插⼊入⽤用户信息
+        let result = await db.collection('user').add({
+            data: {
+                nickName: user.nickName,
+                albums: []
+            }
+        })
 
         app.globalData.nickName = user.nickName
         app.globalData.id = result._id
