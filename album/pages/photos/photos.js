@@ -38,9 +38,16 @@ Page({
         // 设置全局变量
         app.globalData.allData.albums[this.albumId].photos = photos
 
+        // 获取照片列表
+        const fileList = photos.map(photo => photo.fileID)
+
+        // 根据照片列表拉取照片的实际地址
+        const realUrlsRes = await wx.cloud.getTempFileURL({ fileList })
+        const realUrls = realUrlsRes.fileList.map(file => file.tempFileURL)
+
         this.setData({
             albumIndex: this.albumId,
-            photos
+            photos: realUrls
         })
     },
 
@@ -49,19 +56,12 @@ Page({
         // 获取被点击的图片的 index
         const currentIndex = e.currentTarget.dataset.index
 
-        // 获取照片列表
-        const photos = this.data.photos.map(photo => photo.fileID)
-
-        // 根据照片列表拉取照片的实际地址
-        const realUrlsRes = await wx.cloud.getTempFileURL({ fileList: photos })
-        const realUrls = realUrlsRes.fileList.map(file => file.tempFileURL)
-
         // 获取当前被点击的图片的实际地址
-        const currentUrl = realUrls[currentIndex]
+        const currentUrl = this.data.photos[currentIndex]
 
         wx.previewImage({
             current: currentUrl,
-            urls: realUrls
+            urls: this.data.photos
         })
     }
 })
