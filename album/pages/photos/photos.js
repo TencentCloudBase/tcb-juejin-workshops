@@ -10,7 +10,8 @@ Page({
     // 页面的初始数据
     data: {
         albumIndex: '',
-        photos: []
+        photos: [],
+        photoIds: []
     },
 
     onLoad (options) {
@@ -22,6 +23,48 @@ Page({
 
     onShow () {
         this.getPhotos()
+    },
+
+    // 长按事件
+    longpress (e) {
+        const imgIndex = e.currentTarget.dataset.index
+
+        // 展示操作菜单
+        wx.showActionSheet({
+            itemList: ['删除照片'],
+            success: res => {
+                if (res.tapIndex === 0) {
+                    this.deleteFile(imgIndex)
+                }
+            }
+        })
+    },
+
+    // 删除照片
+    async deleteFile (idx) {
+        const fileId = this.data.photoIds[idx]
+
+        // 此处插入删除文件代码
+    },
+
+    async saveImageDelele (fileId) {
+        const photos = app.globalData.allData.albums[this.albumId].photos
+        const newFileIds = this.data.photoIds.filter(id => id !== fileId)
+        const newPhotos = photos.filter(photo => !!~newFileIds.indexOf(photo.fileID))
+
+        app.globalData.allData.albums[this.albumId].photos = newPhotos
+
+        // 获取数据库实例例
+        const db = wx.cloud.database({})
+        // 写⼊入集合
+        db.collection('user').doc(app.globalData.id).update({
+            data: {
+                albums: db.command.set(app.globalData.allData.albums)
+            }
+        }).then(result => {
+            console.log('写⼊入成功', result)
+            wx.navigateBack()
+        })
     },
 
     // 获取相册中的数据
@@ -38,9 +81,21 @@ Page({
         // 设置全局变量
         app.globalData.allData.albums[this.albumId].photos = photos
 
+        // 获取照片列表
+        const fileList = photos.map(photo => photo.fileID)
+
+        // 根据照片列表拉取照片的实际地址
+        const photoIds = []
+        const realUrlsRes = await wx.cloud.getTempFileURL({ fileList })
+        const realUrls = realUrlsRes.fileList.map(file => {
+            photoIds.push(file.fileID)
+            return file.tempFileURL
+        })
+
         this.setData({
             albumIndex: this.albumId,
-            photos
+            photos: realUrls,
+            photoIds
         })
     },
 
@@ -49,19 +104,12 @@ Page({
         // 获取被点击的图片的 index
         const currentIndex = e.currentTarget.dataset.index
 
-        // 获取照片列表
-        const photos = this.data.photos.map(photo => photo.fileID)
-
-        // 根据照片列表拉取照片的实际地址
-        const realUrlsRes = await wx.cloud.getTempFileURL({ fileList: photos })
-        const realUrls = realUrlsRes.fileList.map(file => file.tempFileURL)
-
         // 获取当前被点击的图片的实际地址
-        const currentUrl = realUrls[currentIndex]
+        const currentUrl = this.data.photos[currentIndex]
 
         wx.previewImage({
             current: currentUrl,
-            urls: realUrls
+            urls: this.data.photos
         })
     }
 })
