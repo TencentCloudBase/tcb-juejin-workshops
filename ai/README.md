@@ -3,7 +3,7 @@
 ## 准备工作
 
 1. 已经申请小程序，获取小程序 `AppID`
-在[小程序管理后台](mp.weixin.qq.com)中，[设置] -> [开发设置] 下可以获取微信小程序 `AppID`。
+在[小程序管理后台](https://mp.weixin.qq.com)中，[设置] -> [开发设置] 下可以获取微信小程序 `AppID`。
 <p align="center">
 <img src="https://ask.qcloudimg.com/draft/1011618/8i9zhagojv.png" width="600"/>
 </p>
