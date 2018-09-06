@@ -44,26 +44,31 @@ Page({
     async deleteFile (idx) {
         const fileId = this.data.photoIds[idx]
 
+        // 删除文件
         return wx.cloud.deleteFile({
             fileList: [fileId]
         }).then(res => {
-            const photos = app.globalData.allData.albums[this.albumId].photos
-            const newFileIds = this.data.photoIds.filter(id => id !== fileId)
-            const newPhotos = photos.filter(photo => !!~newFileIds.indexOf(photo.fileID))
+            this.saveImageDelele(fileId)
+        })
+    },
 
-            app.globalData.allData.albums[this.albumId].photos = newPhotos
+    async saveImageDelele (fileId) {
+        const photos = app.globalData.allData.albums[this.albumId].photos
+        const newFileIds = this.data.photoIds.filter(id => id !== fileId)
+        const newPhotos = photos.filter(photo => !!~newFileIds.indexOf(photo.fileID))
 
-            // 获取数据库实例例
-            const db = wx.cloud.database({})
-            // 写⼊入集合
-            db.collection('user').doc(app.globalData.id).update({
-                data: {
-                    albums: db.command.set(app.globalData.allData.albums)
-                }
-            }).then(result => {
-                console.log('写⼊入成功', result)
-                wx.navigateBack()
-            })
+        app.globalData.allData.albums[this.albumId].photos = newPhotos
+
+        // 获取数据库实例例
+        const db = wx.cloud.database({})
+        // 写⼊入集合
+        db.collection('user').doc(app.globalData.id).update({
+            data: {
+                albums: db.command.set(app.globalData.allData.albums)
+            }
+        }).then(result => {
+            console.log('写⼊入成功', result)
+            wx.navigateBack()
         })
     },
 
