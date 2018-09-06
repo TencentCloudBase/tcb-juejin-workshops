@@ -18,5 +18,8 @@ exports.main = async (event) => {
       url_list: [idCardImageUrl],
     },
   });
-  return JSON.parse(result.body).result_list[0];
+  console.log(result.body);
+
+  let body = JSON.parse(result.body);
+  return body.result_list ? body.result_list[0] : { code: 1 };
 };
