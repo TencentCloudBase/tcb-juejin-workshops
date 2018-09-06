@@ -37,6 +37,14 @@ src="https://ask.qcloudimg.com/draft/1011618/u578bll7ft.png">
 1. 学习如何用云开发控制台上传图片、录入商品数据。 
 2. 学习如何用云开发插入、读取数据。
 3. 学习如何用 [wx-js-utils](https://github.com/lcxfs1991/wx-js-utils) 和云函数实现小程序微信支付逻辑。
+4. 了解微信支付相关文档 [小程序侧](https://developers.weixin.qq.com/miniprogram/dev/api/api-pay.html#wxrequestpaymentobject) 和 [微信支付侧](https://pay.weixin.qq.com/wiki/doc/api/wxa/wxa_api.php?chapter=7_10&index=1)
+5. 了解微信小程序模板消息相关文档 [小程序模板消息](https://developers.weixin.qq.com/miniprogram/dev/api/notice.html?q=#%E6%A8%A1%E7%89%88%E6%B6%88%E6%81%AF%E7%AE%A1%E7%90%86)
+
+<p align="center">
+<img 
+width="500px"
+src="https://ask.qcloudimg.com/draft/1011618/v14y85pnri.png">
+</p>
 
 ## 任务一：创建小程序·云开发环境
 
@@ -121,7 +129,7 @@ width="500px"
 src="https://ask.qcloudimg.com/draft/1011618/ebjxu4gbg6.png">
 </p>
 
-3. 返回【数据库】，在 `goods` `collection` 下，点击【添加记录】，按以下格式录入数据。
+3. 返回【数据库】，在 `goods` 这个 `collection` 下，点击【添加记录】，按以下格式录入数据。
 
 <p align="center">
 <img 
@@ -133,31 +141,31 @@ src="https://ask.qcloudimg.com/draft/1011618/pm0hoc4xbx.png">
 ```json
 {
     "name": "鸡蛋干",
-    "pic": "", //fileid
+    "pic": "", // fileID
     "price": "1", // 价格：单位（分）,
     "timestamp": "Tue Sep 04 2018 16:31:34 GMT+0800 (CST)" // Date 对象数据
 }
 {
     "name": "辣条",
-    "pic": "", //fileid
+    "pic": "", // fileID
     "price": "1", // 价格：单位（分）,
     "timestamp": "Tue Sep 04 2018 16:31:34 GMT+0800 (CST)" // Date 对象数据
 }
 {
     "name": "坚果",
-    "pic": "", //fileid
+    "pic": "", // fileID
     "price": "1", // 价格：单位（分）,
     "timestamp": "Tue Sep 04 2018 16:31:34 GMT+0800 (CST)" // Date 对象数据
 }
 {
     "name": "薯片",
-    "pic": "", //fileid
+    "pic": "", // fileID
     "price": "1", // 价格：单位（分）,
     "timestamp": "Tue Sep 04 2018 16:31:34 GMT+0800 (CST)" // Date 对象数据
 }
 {
     "name": "包子",
-    "pic": "", //fileid
+    "pic": "", // fileID
     "price": "1", // 价格：单位（分）,
     "timestamp": "Tue Sep 04 2018 16:31:34 GMT+0800 (CST)" // Date 对象数据
 }
@@ -165,10 +173,13 @@ src="https://ask.qcloudimg.com/draft/1011618/pm0hoc4xbx.png">
 
 ## 任务二：读取数据与发起订单
 
+**任务目标**: 利用云开发的小程序端接口读取商品数据和在云函数发起微信支付订单
+
 ### 读取数据
 1. 将下面代码，输入到 `client/pages/list/index.js` 中的 `getGoodsList` 方法中，通过此方法，可以获取所有商品的数据。
 
 ```js
+// 利用云开发新接口，读取所有商品数据
 const db = wx.cloud.database();
 const result = await db.collection('goods').get();
 
@@ -187,6 +198,7 @@ wx.showLoading({
     title: '正在下单',
 });
 
+// 利用云开发新接口，调用云函数发起订单
 let id = e.target.dataset.goodid;
 const { result } = await wx.cloud.callFunction({
     name: 'pay',
@@ -214,7 +226,7 @@ npm i --production
 ```
 
 2. 填写腾讯云、微信商户与微信小程序相关配置
-新建 `cloud/functions/pay/config/index.js`，并填入腾讯云的 `AppId`, `SecretId`, `SecretKey`:
+新建 `cloud/functions/pay/config/index.js`，并填入腾讯云的 `AppId`, `SecretId`, `SecretKey`，还有微信支付的商户号 `MCHID` 和 商户密钥 `KEY`：
 
 ```js
 module.exports = {
@@ -230,9 +242,10 @@ module.exports = {
 
 ```js
 case 'unifiedorder': {
-    // 统一下单
+    // 在云函数参数中，提取商品 ID
     const { goodId } = data;
 
+    // 查询该商品 ID 是否存在于数据库中，并将数据提取出来
     let goods = await goodCollection.doc(goodId).get();
     
     if (!goods.data.length) {
@@ -242,13 +255,17 @@ case 'unifiedorder': {
         });
     }
 
+    // 在云函数中提取数据，包括名称、价格才更合理安全，
+    // 因为从端里传过来的商品数据都是不可靠的
     let good = goods.data[0];
 
+    // 拼凑微信支付统一下单的参数
     const curTime = Date.now();
     const tradeNo = `${goodId}-${curTime}`;
     const body = good.name;
     const spbill_create_ip = ip.address() || '127.0.0.1';
-    const notify_url = 'http://www.qq.com'; //'127.0.0.1';
+    // 云函数暂不支付 http 触发器，因此这里回调 notify_url 可以先随便填。
+    const notify_url = 'http://www.qq.com';
     const total_fee = good.price;
     const time_stamp = '' + Math.ceil(Date.now() / 1000);
     const out_trade_no = `${tradeNo}`;
@@ -265,6 +282,7 @@ case 'unifiedorder': {
         timeStamp: time_stamp,
     };
 
+    // 调用 wx-js-utils 中的统一下单方法
     const {
         return_code,
         ...restData 
@@ -278,7 +296,7 @@ case 'unifiedorder': {
             nonce_str
         } = restData;
 
-        // 下面是进行微信小程序支付的
+        // 微信小程序支付要单独进地签名，并返回给小程序端
         const sign = signMiniPay({
             mpAppId,
             KEY,
@@ -297,7 +315,7 @@ case 'unifiedorder': {
             total_fee,
             prepay_id,
             sign,
-            status: 0, // 0表示刚创建订单
+            status: 0, // 订单文档的status 0 未支付 1 已支付 2 已关闭
             _openid: openid,
         };
 
@@ -314,14 +332,16 @@ case 'unifiedorder': {
 ```
 
 5. 上传云函数
-在微信开发者工具中，右键点击云函数 `pay`，选取好环境后，上传云函数（如果是新建，会显示`上传并创建`）。
+在微信开发者工具中，右键点击云函数 `pay`，选取好环境后，选取好环境后，点击【创建并部署】。
 <p align="center">
 <img 
 width="350px"
-src="https://ask.qcloudimg.com/draft/1011618/vt6ukadee1.png">
+src="https://ask.qcloudimg.com/draft/1011618/u6y2kk99zd.png">
 </p>
 
 ## 任务二：发起支付与模板消息通知
+
+**任务目标**: 利用云函数发起支付与发送模板消息
 
 ### 发起支付
 1. 将下面代码，输入到 `client/pages/result/index.js` 中的 `pay` 方法中，通过此方法，可以调起微信支付。
@@ -341,6 +361,7 @@ const {
     total_fee
 } = orderQuery;
 
+// 小程序端发起微信支付
 wx.requestPayment({
     timeStamp: time_stamp,
     nonceStr: nonce_str,
@@ -348,34 +369,35 @@ wx.requestPayment({
     signType: 'MD5',
     paySign: sign,
     async success(res) {
-    wx.showLoading({
-        title: '正在支付',
-    });
+        wx.showLoading({
+            title: '正在支付',
+        });
 
-    wx.showToast({
-        title: '支付成功',
-        icon: 'success',
-        duration: 1500,
-        async success() {
-        _this.getOrder();
+        wx.showToast({
+            title: '支付成功',
+            icon: 'success',
+            duration: 1500,
+            async success() {
+                _this.getOrder();
 
-        await wx.cloud.callFunction({
-            name: 'pay',
-            data: {
-            type: 'payorder',
-            data: {
-                body,
-                prepay_id,
-                out_trade_no,
-                total_fee
-            }
+                // 云函数中处理支付逻辑
+                await wx.cloud.callFunction({
+                    name: 'pay',
+                    data: {
+                        type: 'payorder',
+                        data: {
+                            body,
+                            prepay_id,
+                            out_trade_no,
+                            total_fee
+                        }
+                    }
+                });
+                wx.hideLoading();
             }
         });
-        wx.hideLoading();
-        }
-    });
     },
-    fail: function (res) { }
+    fail: function (res) {}
 })
 ```
 
@@ -383,17 +405,20 @@ wx.requestPayment({
 
 ```js
 case 'payorder': {
+    // 从端里出来相关的订单相信
     const {
-    out_trade_no,
-    prepay_id,
-    body,
-    total_fee
+        out_trade_no,
+        prepay_id,
+        body,
+        total_fee
     } = data;
 
+    // 到微信支付侧查询是否存在该订单，并查询订单状态，看看是否已经支付成功了。
     const { return_code, ...restData } = await pay.orderQuery({
         out_trade_no
     });
 
+    // 若订单存在并支付成功，则开始处理支付
     if (restData.trade_state === 'SUCCESS') {
         let result = await orderCollection
             .where({ out_trade_no })
@@ -407,6 +432,8 @@ case 'payorder': {
         let time = `${curDate.getFullYear()}-${curDate.getMonth() +
             1}-${curDate.getDate()} ${curDate.getHours()}:${curDate.getMinutes()}:${curDate.getSeconds()}`;
 
+        // 调用另一个云函数，发送模板消息，通知用户已经支付成功了
+        // 如果在实验中拿不到模板消息的模板 id，这段可以暂时去掉
         let messageResult = await app.callFunction({
             name: 'wxmessage',
             data: {

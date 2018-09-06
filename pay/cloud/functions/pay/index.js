@@ -30,9 +30,13 @@ exports.main = async function (event) {
 
   // 订单文档的status 0 未支付 1 已支付 2 已关闭
   switch (type) {
+    // [在此处放置 unifiedorder 的相关代码]
+
+    // [在此处放置 payorder 的相关代码]
+
+    // 查询订单
     case 'orderquery': {
       const { transaction_id, out_trade_no } = data;
-      // 查询订单
 
       const { data: dbData } = await orderCollection
         .where({ out_trade_no })
@@ -48,8 +52,9 @@ exports.main = async function (event) {
         data: { ...restData, ...dbData[0] }
       });
     }
+
+    // 关闭订单
     case 'closeorder': {
-      // 关闭订单
       const { out_trade_no } = data;
       const { return_code, ...restData } = await pay.closeOrder({
         out_trade_no

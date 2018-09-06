@@ -24,10 +24,16 @@ Page({
     this.getGoodsList();
   },
 
+  /**
+   * 获取商品列表
+   */
   async getGoodsList() {
     
   },
 
+  /**
+   * 发起订单
+   */
   async makeOrder(e) {
     
   }
