@@ -1,5 +1,3 @@
-/**index.wxss**/
-
 .namecard {
   width: 200px;
   height: 126px;

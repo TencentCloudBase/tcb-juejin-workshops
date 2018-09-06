@@ -38,6 +38,12 @@ src="https://ask.qcloudimg.com/draft/1011618/hk5mp3mxrw.png">
 2. 学习如何用腾讯云的智能图像处理服务提供的 `image-ndoe-sdk` 做名片识别处理。
 3. 学习如何用在云开发上实现名片识别逻辑
 
+<p align="center">
+<img 
+width="500px"
+src="https://ask.qcloudimg.com/draft/1011618/v14y85pnri.png">
+</p>
+
 ## 任务一：创建小程序·云开发环境
 
 **任务目标**: 创建小程序·云开发环境，用于后面存储信息和开发云函数。
@@ -109,32 +115,34 @@ src="https://ask.qcloudimg.com/draft/1011618/x4uwxtqg7y.png">
 // 从相册和相机中获取图片
 wx.chooseImage({
     success: dRes => {
-    
+    // 展示加载组件
     wx.showLoading({
         title: '上传文件',
     });
 
-    // 上传文件任务
-    const uploadTask = wx.cloud.uploadFile({
-        cloudPath: `${Date.now()}-${Math.floor(Math.random(0, 1) * 10000000)}.png`,
+    let cloudPath = `${Date.now()}-${Math.floor(Math.random(0, 1) * 1000)}.png`;
+
+    // 云开发新接口，用于上传文件
+    wx.cloud.uploadFile({
+        cloudPath: cloudPath,
         filePath: dRes.tempFilePaths[0],
         success: res => {
-        
-        if (res.statusCode < 300) {
-            this.setData({
-                fileID: res.fileID,
-            }, () => {
-                // 获取临时链接
-                this.getTempFileURL();
-            });
-        }
+            if (res.statusCode < 300) {
+                this.setData({
+                    fileID: res.fileID,
+                }, () => {
+                    // 获取临时链接
+                    this.getTempFileURL();
+                });
+            }
         },
         fail: err => {
-        wx.hideLoading();
-        wx.showToast({
-            title: '上传失败',
-            icon: 'none'
-        });
+            // 隐藏加载组件并提示
+            wx.hideLoading();
+            wx.showToast({
+                title: '上传失败',
+                icon: 'none'
+            });
         },
     })
     },
@@ -145,41 +153,82 @@ wx.chooseImage({
 2. 将下面代码，输入到 `client/pages/index/index.js` 中的 `getTempFileURL` 方法中，用于获取图片临时链接，并且从后续的名片识别。
 
 ```js
+// 云开发新接口，用于获取文件的临时链接
 wx.cloud.getTempFileURL({
     fileList: [{
-    fileID: this.data.fileID,
+        fileID: this.data.fileID,
     }],
 }).then(res => {
-    console.log('获取成功', res)
+    console.log('获取成功', res);
     let files = res.fileList;
 
     if (files.length) {
-    this.setData({
-        coverImage: files[0].tempFileURL
-    }, () => {
-        this.parseNameCard();
-    });
+        this.setData({
+            coverImage: files[0].tempFileURL
+        }, () => {
+            this.parseNameCard();
+        });
     }
     else {
-    wx.showToast({
-        title: '获取图片链接失败',
-        icon: 'none'
-    });
+        wx.showToast({
+            title: '获取图片链接失败',
+            icon: 'none'
+        });
     }
 
 }).catch(err => {
-    console.error('获取失败', err)
+    console.error('获取失败', err);
     wx.showToast({
-    title: '获取图片链接失败',
-    icon: 'none'
+        title: '获取图片链接失败',
+        icon: 'none'
     });
     wx.hideLoading();
 });
 ```
 
+3. 将下面代码，输入到 `client/pages/index/index.js` 中的 `addNameCard` 方法中，用于将识别并处理好的名片数据插入数据库。
+
+```js
+const data = this.data
+const formData = e.detail.value;
+
+wx.showLoading({
+    title: '添加中'
+});
+
+formData.cover = this.data.fileID;
+
+const db = wx.cloud.database();
+db.collection('namecard').add({
+    data: formData
+}).then((res) => {
+    wx.hideLoading();
+
+    app.globalData.namecard.id = res._id;
+
+    wx.navigateTo({
+        url: '../detail/index'
+    });
+
+    // 重置数据
+    this.setData({
+        coverImage: null,
+        fileID: null,
+        formData: []
+    });
+    
+}).catch((e) => {
+    wx.hideLoading();
+    wx.showToast({
+        title: '添加失败，请重试',
+        icon: 'none'
+    });
+});
+```
+
 ## 任务三：使用云函数识别名片
 
-**任务目标**: 利用了 `image-node-sdk` 在云函数中识别名片
+**任务目标**: 利用了 [image-node-sdk](https://github.com/TencentCloudBase/image-node-sdk) 在云函数中识别名片
 
 1. 在 `cloud/functions/parseNameCard` 目录下，运行以下命令，安装依赖。
 
@@ -192,9 +241,9 @@ npm i --production
 
 ```js
 module.exports = {
-  AppId: '',
-  SecretId: '',
-  SecretKey: ''
+    AppId: '',
+    SecretId: '',
+    SecretKey: ''
 };
 ```
 
@@ -202,9 +251,9 @@ module.exports = {
 
 ```js
 const imgClient = new ImageClient({
-  AppId,
-  SecretId,
-  SecretKey,
+    AppId,
+    SecretId,
+    SecretKey,
 });
 
 exports.main = async (event) => {
@@ -219,11 +268,11 @@ exports.main = async (event) => {
 ```
 
 4. 上传云函数
-在微信开发者工具中，右键点击云函数 `parseNameCard`，选取好环境后，上传云函数（如果是新建，会显示`上传并创建`）。
+在微信开发者工具中，右键点击云函数 `parseNameCard`，选取好环境后，点击【创建并部署】。
 <p align="center">
 <img 
 width="350px"
-src="https://ask.qcloudimg.com/draft/1011618/70fpehld1i.png">
+src="https://ask.qcloudimg.com/draft/1011618/i6ihirzyyx.png">
 </p>
 
 5. 在小程序端调用云函数 `parseNameCard`
@@ -233,34 +282,34 @@ src="https://ask.qcloudimg.com/draft/1011618/70fpehld1i.png">
 wx.showLoading({
     title: '解析名片',
 });
+
+// 云开发新接口，调用云函数
 wx.cloud.callFunction({
     name: 'parseNameCard',
     data: {
-    url: this.data.coverImage
+        url: this.data.coverImage
     }
 }).then(res => {
-    // console.log(res);
-    if (res.code && res.result && res.result.data) {
-    wx.showToast({
-        title: '解析失败，请重试',
-        icon: 'none'
-    });
-    wx.hideLoading();
-    return;
+    if (res.code || !res.result || !res.result.data) {
+        wx.showToast({
+            title: '解析失败，请重试',
+            icon: 'none'
+        });
+        wx.hideLoading();
+        return;
     }
     
     let data = this.transformMapping(res.result.data);
-    console.log(data);
     this.setData({
-    formData: data
+        formData: data
     });
 
     wx.hideLoading();
 }).catch(err => {
     console.error('解析失败，请重试。', err);
     wx.showToast({
-    title: '解析失败，请重试',
-    icon: 'none'
+        title: '解析失败，请重试',
+        icon: 'none'
     });
     wx.hideLoading();
 });
@@ -274,17 +323,17 @@ wx.cloud.callFunction({
 将下面代码，输入到 `client/pages/list/index.js` 中的 `getData` 方法中，通过此方法，默认读取最多20个名片数据。
 
 ```js
+// 云函数新接口，用于获取数据库中数据
 const db = wx.cloud.database({});
 db.collection('namecard').get().then((res) => {
-    console.log(res);
     let data = res.data;
     this.setData({
-    list: data
+        list: data
     });
 }).catch(e => {
     wx.showToast({
-    title: 'db读取失败',
-    icon: 'none'
+        title: 'db读取失败',
+        icon: 'none'
     });
 });
 ```
@@ -305,7 +354,7 @@ wx.navigateTo({
 将下面代码，输入到 `client/pages/detail/index.js` 中的 `getNameCardDetail` 方法中，通过此方法，可以获取某个名片的详情数据。
 
 ```js
-// 初始化db
+// 云函数新接口，用于获取数据库中数据
 const db = wx.cloud.database({});
 let ncId = app.globalData.namecard.id;
 db.collection('namecard').doc(ncId).get().then(res => {
@@ -314,25 +363,25 @@ db.collection('namecard').doc(ncId).get().then(res => {
 
     let namecard = [];
     Object.keys(data).forEach((item) => {
-    if (item === 'cover' || item === '_id' 
-        || item === '_openid') {
-        return;
-    }
-    namecard.push({
-        name: mapping[item],
-        value: data[item]
-    });
+        if (item === 'cover' || item === '_id' 
+            || item === '_openid') {
+            return;
+        }
+        namecard.push({
+            name: mapping[item],
+            value: data[item]
+        });
     });
 
     this.setData({
-    cover: data.cover,
-    namecard: namecard
+        cover: data.cover,
+        namecard: namecard
     });
 })
 .catch(e => {
     wx.showToast({
-    title: 'db读取失败',
-    icon: 'none'
+        title: 'db读取失败',
+        icon: 'none'
     });
 });
 ```

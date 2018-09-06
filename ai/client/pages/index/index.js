@@ -4,7 +4,6 @@ const mapping = require('../common/mapping.js');
 
 Page({
   data: {
-    hasUserInfo: false,
     fileID: null,
     coverImage: '',
     formData: []
@@ -13,14 +12,14 @@ Page({
   /**
    * 上传文件
    */
-  uploadFile: function () {
+  uploadFile() {
     
   },
 
   /**
    * 获取图片链接
    */
-  getTempFileURL: function () {
+  getTempFileURL() {
     
   },
 
@@ -31,6 +30,10 @@ Page({
     
   },
 
+  /**
+   * 将获取的名片数据进行处理
+   * @param {Object} data
+   */
   transformMapping(data) {
     let record = {};
     let returnData = [];
@@ -39,12 +42,14 @@ Page({
       let name = null;
       if (mapping.hasOwnProperty(item.item)) {
         name = mapping[item.item];
+        // 写入英文名
         item.name = name;
       }
 
       return item;
     });
 
+    // 过滤重复的字段
     data.forEach((item) => {
       if (!record.hasOwnProperty(item.item)) {
         returnData.push(item);
@@ -58,43 +63,7 @@ Page({
   /**
    * 上传名片
    */
-  addNameCard: function (e) {
-    const data = this.data
-    const formData = e.detail.value;
-    console.log(formData);
-
-    wx.showLoading({
-      title: '添加中'
-    });
-
-    formData.cover = this.data.fileID;
-
-    const db = wx.cloud.database();
-    db.collection('namecard').add({
-      data: formData
-    }).then((res) => {
-      console.log(res);
-      wx.hideLoading();
-
-      app.globalData.namecard.id = res._id;
-
-      wx.navigateTo({
-        url: '../detail/index'
-      });
-
-      // 重置数据
-      this.setData({
-        coverImage: null,
-        fileID: null,
-        formData: []
-      });
-      
-    }).catch((e) => {
-      wx.hideLoading();
-      wx.showToast({
-        title: '添加失败，请重试',
-        icon: 'none'
-      });
-    });
+  addNameCard(e) {
+    
   }
 })
