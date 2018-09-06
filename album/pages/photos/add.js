@@ -28,8 +28,8 @@ Page({
     formSubmit (e) {
         wx.showLoading({ title: '加载中' })
 
+        // 并发上传图片
         const uploadTasks = this.data.photosNew.map(item => this.uploadPhoto(item.src))
-
         Promise.all(uploadTasks).then(result => {
             this.addPhotos(result, e.detail.value.desc)
             wx.hideLoading()
@@ -89,14 +89,14 @@ Page({
 
     // 添加图片信息到数据库
     addPhotos (photos, comment) {
-        // 初始化数据库
-        const db = wx.cloud.database({})
+        // 从全局数据中读出用户信息里的照片列表
         const oldPhotos = app.globalData.allData.albums[this.data.albumIndex].photos
         const albumPhotos = photos.map(photo => ({
             fileID: photo.fileID,
             comments: comment
         }))
 
+        // 合并老照片的数组和新照片的数组
         app.globalData.allData.albums[this.data.albumIndex].photos = [...oldPhotos, ...albumPhotos]
 
         // 在此插入储存图片信息代码
