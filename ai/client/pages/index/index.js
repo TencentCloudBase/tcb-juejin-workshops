@@ -21,8 +21,9 @@ Page({
           title: '上传文件',
         });
 
+        let cloudPath = `${Date.now()}-${Math.floor(Math.random(0, 1) * 1000)}.png`;
         const uploadTask = wx.cloud.uploadFile({
-          cloudPath: `${Date.now()}-${Math.floor(Math.random(0, 1) * 10000000)}.png`,
+          cloudPath: cloudPath,
           filePath: dRes.tempFilePaths[0],
           success: res => {
             if (res.statusCode < 300) {
@@ -96,7 +97,7 @@ Page({
       }
     }).then(res => {
       // console.log(res);
-      if (res.code && res.result && res.result.data) {
+      if (res.code || !res.result || !res.result.data) {
         wx.showToast({
           title: '解析失败，请重试',
           icon: 'none'
