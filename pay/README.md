@@ -38,6 +38,7 @@ src="https://ask.qcloudimg.com/draft/1011618/u578bll7ft.png">
 2. 学习如何用云开发插入、读取数据。
 3. 学习如何用 [wx-js-utils](https://github.com/lcxfs1991/wx-js-utils) 和云函数实现小程序微信支付逻辑。
 4. 了解微信支付相关文档 [小程序侧](https://developers.weixin.qq.com/miniprogram/dev/api/api-pay.html#wxrequestpaymentobject) 和 [微信支付侧](https://pay.weixin.qq.com/wiki/doc/api/wxa/wxa_api.php?chapter=7_10&index=1)
+5. 了解微信小程序模板消息相关文档 [小程序模板消息](https://developers.weixin.qq.com/miniprogram/dev/api/notice.html?q=#%E6%A8%A1%E7%89%88%E6%B6%88%E6%81%AF%E7%AE%A1%E7%90%86)
 
 <p align="center">
 <img 
