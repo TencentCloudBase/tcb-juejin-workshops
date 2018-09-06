@@ -10,7 +10,8 @@ Page({
     // 页面的初始数据
     data: {
         albumIndex: '',
-        photos: []
+        photos: [],
+        photoIds: []
     },
 
     onLoad (options) {
@@ -22,6 +23,48 @@ Page({
 
     onShow () {
         this.getPhotos()
+    },
+
+    // 长按事件
+    longpress (e) {
+        const imgIndex = e.currentTarget.dataset.index
+
+        // 展示操作菜单
+        wx.showActionSheet({
+            itemList: ['删除照片'],
+            success: res => {
+                if (res.tapIndex === 0) {
+                    this.deleteFile(imgIndex)
+                }
+            }
+        })
+    },
+
+    // 删除照片
+    async deleteFile (idx) {
+        const fileId = this.data.photoIds[idx]
+
+        return wx.cloud.deleteFile({
+            fileList: [fileId]
+        }).then(res => {
+            const photos = app.globalData.allData.albums[this.albumId].photos
+            const newFileIds = this.data.photoIds.filter(id => id !== fileId)
+            const newPhotos = photos.filter(photo => !!~newFileIds.indexOf(photo.fileID))
+
+            app.globalData.allData.albums[this.albumId].photos = newPhotos
+
+            // 获取数据库实例例
+            const db = wx.cloud.database({})
+            // 写⼊入集合
+            db.collection('user').doc(app.globalData.id).update({
+                data: {
+                    albums: db.command.set(app.globalData.allData.albums)
+                }
+            }).then(result => {
+                console.log('写⼊入成功', result)
+                wx.navigateBack()
+            })
+        })
     },
 
     // 获取相册中的数据
@@ -42,12 +85,17 @@ Page({
         const fileList = photos.map(photo => photo.fileID)
 
         // 根据照片列表拉取照片的实际地址
+        const photoIds = []
         const realUrlsRes = await wx.cloud.getTempFileURL({ fileList })
-        const realUrls = realUrlsRes.fileList.map(file => file.tempFileURL)
+        const realUrls = realUrlsRes.fileList.map(file => {
+            photoIds.push(file.fileID)
+            return file.tempFileURL
+        })
 
         this.setData({
             albumIndex: this.albumId,
-            photos: realUrls
+            photos: realUrls,
+            photoIds
         })
     },
 
