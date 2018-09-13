@@ -15,9 +15,9 @@ Page({
 
     this.setData({
       out_trade_no: id
-    }, () => {
+    }, async () => {
 
-      this.getOrder();
+      await this.getOrder();
 
       wx.hideLoading();
     });

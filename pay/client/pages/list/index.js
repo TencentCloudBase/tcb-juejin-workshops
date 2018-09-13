@@ -54,6 +54,8 @@ Page({
 
     const data = result.data;
 
+    wx.hideLoading();
+
     wx.navigateTo({
       url: `/pages/result/index?id=${data.out_trade_no}`
     });

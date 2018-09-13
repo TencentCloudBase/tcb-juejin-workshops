@@ -5,14 +5,12 @@ const {
   KEY
 } = require('./config/index');
 const {
-  WXPayConstants
+  WXPayConstants,
+  WXPayUtil
 } = require('wx-js-utils');
 const Res = require('./lib/res');
-const cryptoRandomString = require('crypto-random-string');
-const {
-  signMiniPay
-} = require('./lib/utils');
 const ip = require('ip');
+
 /**
  *
  * @param {obj} event
@@ -81,13 +79,13 @@ exports.main = async function (event) {
         } = restData;
 
         // 下面是进行微信小程序支付的
-        const sign = signMiniPay({
-          mpAppId,
-          KEY,
-          nonce_str,
-          prepay_id,
-          time_stamp
-        });
+        const sign = WXPayUtil.generateSignature({
+          appId: mpAppId,
+          nonceStr: nonce_str,
+          package: `prepay_id=${prepay_id}`,
+          signType: 'MD5',
+          timeStamp: time_stamp
+        }, KEY);
         
         let orderData = {
           out_trade_no,
@@ -181,6 +179,7 @@ exports.main = async function (event) {
             }
           }
         });
+          
       }
 
       return new Res({

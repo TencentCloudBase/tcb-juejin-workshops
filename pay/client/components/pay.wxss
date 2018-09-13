@@ -1,7 +1,0 @@
-@import "/lib/weui.wxss";
-
-.container {
-  text-align: center;
-  display: inline-block;
-  width:373rpx;
-}

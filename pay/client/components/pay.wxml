@@ -1,3 +1,0 @@
-<view class="container">
-    <button class="button" type="primary" bindtap="requestFn">{{text}}</button>
-</view>

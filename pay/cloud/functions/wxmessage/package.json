@@ -10,6 +10,6 @@
   "license": "MIT",
   "dependencies": {
     "request": "^2.87.0",
-    "wx-js-utils": "^0.0.3"
+    "wx-js-utils": "0.0.4"
   }
 }

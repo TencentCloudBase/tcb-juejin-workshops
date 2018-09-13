@@ -9,14 +9,9 @@
   "author": "",
   "license": "MIT",
   "dependencies": {
-    "crypto": "^1.0.1",
-    "crypto-random-string": "^1.0.0",
     "ip": "^1.1.5",
-    "random-int": "^1.0.0",
     "request": "^2.87.0",
     "tcb-admin-node": "^1.0.30",
-    "wx-js-utils": "0.0.3",
-    "wxpay.js": "0.0.3",
-    "xml2js": "^0.4.19"
+    "wx-js-utils": "0.0.4"
   }
 }
