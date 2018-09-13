@@ -26,7 +26,7 @@ Page({
 
     const db = wx.cloud.database();
     let result = await db.collection('order').get();
-    let data = result.data || [];         
+    let data = result.data || [];
     this.setData({
       historyorders: data
     });

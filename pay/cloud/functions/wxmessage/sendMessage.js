@@ -14,6 +14,8 @@ module.exports = async function ({
   openId
 }) {
 
+  console.log('=====formId======', formId);
+
   const wxMiniUser = new WXMINIUser({ appId, secret });
   const access_token = await wxMiniUser.getAccessToken();
 

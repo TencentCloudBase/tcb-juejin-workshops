@@ -129,47 +129,16 @@ width="500px"
 src="https://ask.qcloudimg.com/draft/1011618/ebjxu4gbg6.png">
 </p>
 
-3. 返回【数据库】，在 `goods` 这个 `collection` 下，点击【添加记录】，按以下格式录入数据。
+打开 `cloud/database/goods.json`，将保存下来的文件 `fileID`，依照顺序，填入数据的 `pic` 字段中。
+
+3. 返回【数据库】，在 `goods` 这个 `collection` 下，点击【导入】，选择 `cloud/database/goods.json` 文件进入数据批量导入。
 
 <p align="center">
 <img 
 width="500px"
-src="https://ask.qcloudimg.com/draft/1011618/pm0hoc4xbx.png">
+src="https://ask.qcloudimg.com/draft/1011618/lzyobegh98.png">
 </p>
 
-以下是数据例子
-```json
-{
-    "name": "鸡蛋干",
-    "pic": "", // fileID
-    "price": "1", // 价格：单位（分）,
-    "timestamp": "Tue Sep 04 2018 16:31:34 GMT+0800 (CST)" // Date 对象数据
-}
-{
-    "name": "辣条",
-    "pic": "", // fileID
-    "price": "1", // 价格：单位（分）,
-    "timestamp": "Tue Sep 04 2018 16:31:34 GMT+0800 (CST)" // Date 对象数据
-}
-{
-    "name": "坚果",
-    "pic": "", // fileID
-    "price": "1", // 价格：单位（分）,
-    "timestamp": "Tue Sep 04 2018 16:31:34 GMT+0800 (CST)" // Date 对象数据
-}
-{
-    "name": "薯片",
-    "pic": "", // fileID
-    "price": "1", // 价格：单位（分）,
-    "timestamp": "Tue Sep 04 2018 16:31:34 GMT+0800 (CST)" // Date 对象数据
-}
-{
-    "name": "包子",
-    "pic": "", // fileID
-    "price": "1", // 价格：单位（分）,
-    "timestamp": "Tue Sep 04 2018 16:31:34 GMT+0800 (CST)" // Date 对象数据
-}
-```
 
 ## 任务二：读取数据与发起订单
 
@@ -212,6 +181,8 @@ const { result } = await wx.cloud.callFunction({
 
 const data = result.data;
 
+wx.hideLoading();
+
 wx.navigateTo({
     url: `/pages/result/index?id=${data.out_trade_no}`
 });
@@ -225,8 +196,8 @@ wx.navigateTo({
 npm i --production
 ```
 
-2. 填写腾讯云、微信商户与微信小程序相关配置
-新建 `cloud/functions/pay/config/index.js`，并填入腾讯云的 `AppId`, `SecretId`, `SecretKey`，还有微信支付的商户号 `MCHID` 和 商户密钥 `KEY`：
+2. 填写微信商户与微信小程序相关配置
+新建 `cloud/functions/pay/config/index.js`，并填入小程序的 `AppId`，还有微信支付的商户号 `MCHID` 和 商户密钥 `KEY`：
 
 ```js
 module.exports = {
@@ -247,7 +218,7 @@ case 'unifiedorder': {
 
     // 查询该商品 ID 是否存在于数据库中，并将数据提取出来
     let goods = await goodCollection.doc(goodId).get();
-    
+
     if (!goods.data.length) {
         return new Res({
             code: 1,
@@ -265,12 +236,12 @@ case 'unifiedorder': {
     const body = good.name;
     const spbill_create_ip = ip.address() || '127.0.0.1';
     // 云函数暂不支付 http 触发器，因此这里回调 notify_url 可以先随便填。
-    const notify_url = 'http://www.qq.com';
+    const notify_url = 'http://www.qq.com'; //'127.0.0.1';
     const total_fee = good.price;
     const time_stamp = '' + Math.ceil(Date.now() / 1000);
     const out_trade_no = `${tradeNo}`;
     const sign_type = WXPayConstants.SIGN_TYPE_MD5;
-    
+
     let orderParam = {
         body,
         spbill_create_ip,
@@ -290,21 +261,21 @@ case 'unifiedorder': {
 
     let order_id = null;
 
-    if (return_code === 'SUCCESS' && restData.result_code === 'SUCCESS') {
+    if (return_code === 'SUCCESS'&& restData.result_code === 'SUCCESS') {
         const {
             prepay_id, 
             nonce_str
         } = restData;
 
         // 微信小程序支付要单独进地签名，并返回给小程序端
-        const sign = signMiniPay({
-            mpAppId,
-            KEY,
-            nonce_str,
-            prepay_id,
-            time_stamp
-        });
-        
+        const sign = WXPayUtil.generateSignature({
+            appId: mpAppId,
+            nonceStr: nonce_str,
+            package: `prepay_id=${prepay_id}`,
+            signType: 'MD5',
+            timeStamp: time_stamp
+        }, KEY);
+
         let orderData = {
             out_trade_no,
             time_stamp,
@@ -361,7 +332,6 @@ const {
     total_fee
 } = orderQuery;
 
-// 小程序端发起微信支付
 wx.requestPayment({
     timeStamp: time_stamp,
     nonceStr: nonce_str,
@@ -369,35 +339,34 @@ wx.requestPayment({
     signType: 'MD5',
     paySign: sign,
     async success(res) {
-        wx.showLoading({
-            title: '正在支付',
-        });
+    wx.showLoading({
+        title: '正在支付',
+    });
 
-        wx.showToast({
-            title: '支付成功',
-            icon: 'success',
-            duration: 1500,
-            async success() {
-                _this.getOrder();
+    wx.showToast({
+        title: '支付成功',
+        icon: 'success',
+        duration: 1500,
+        async success() {
+        _this.getOrder();
 
-                // 云函数中处理支付逻辑
-                await wx.cloud.callFunction({
-                    name: 'pay',
-                    data: {
-                        type: 'payorder',
-                        data: {
-                            body,
-                            prepay_id,
-                            out_trade_no,
-                            total_fee
-                        }
-                    }
-                });
-                wx.hideLoading();
+        await wx.cloud.callFunction({
+            name: 'pay',
+            data: {
+            type: 'payorder',
+            data: {
+                body,
+                prepay_id,
+                out_trade_no,
+                total_fee
+            }
             }
         });
+        wx.hideLoading();
+        }
+    });
     },
-    fail: function (res) {}
+    fail: function (res) { }
 })
 ```
 
@@ -421,42 +390,44 @@ case 'payorder': {
     // 若订单存在并支付成功，则开始处理支付
     if (restData.trade_state === 'SUCCESS') {
         let result = await orderCollection
-            .where({ out_trade_no })
-            .update({
+          .where({ out_trade_no })
+          .update({
             status: 1,
             trade_state: restData.trade_state,
             trade_state_desc: restData.trade_state_desc
-            });
+          });
+
         
         let curDate = new Date();
         let time = `${curDate.getFullYear()}-${curDate.getMonth() +
-            1}-${curDate.getDate()} ${curDate.getHours()}:${curDate.getMinutes()}:${curDate.getSeconds()}`;
+          1}-${curDate.getDate()} ${curDate.getHours()}:${curDate.getMinutes()}:${curDate.getSeconds()}`;
 
         // 调用另一个云函数，发送模板消息，通知用户已经支付成功了
         // 如果在实验中拿不到模板消息的模板 id，这段可以暂时去掉
         let messageResult = await app.callFunction({
-            name: 'wxmessage',
+          name: 'wxmessage',
+          data: {
+            formId: prepay_id,
+            openId: userInfo.openId,
+            appId: userInfo.appId,
+            page: `/pages/result/index?id=${out_trade_no}`,
             data: {
-                formId: prepay_id,
-                openId: userInfo.openId,
-                appId: userInfo.appId,
-                page: `/pages/result/index?id=${out_trade_no}`,
-                data: {
-                    keyword1: {
-                        value: out_trade_no // 订单号
-                    },
-                    keyword2: {
-                        value: body // 物品名称
-                    },
-                    keyword3: {
-                        value: time// 支付时间
-                    },
-                    keyword4: {
-                        value: (total_fee / 100) + "元" // 支付金额
-                    }
-                }
+              keyword1: {
+                value: out_trade_no // 订单号
+              },
+              keyword2: {
+                value: body // 物品名称
+              },
+              keyword3: {
+                value: time// 支付时间
+              },
+              keyword4: {
+                value: (total_fee / 100) + "元" // 支付金额
+              }
             }
+          }
         });
+          
     }
 
     return new Res({
