@@ -131,7 +131,7 @@ src="https://ask.qcloudimg.com/draft/1011618/ebjxu4gbg6.png">
 
 打开 `cloud/database/goods.json`，将保存下来的文件 `fileID`，依照顺序，填入数据的 `pic` 字段中。
 
-3. 返回【数据库】，在 `goods` 这个 `collection` 下，点击【导入】，选择 `cloud/database/goods.json` 文件进入数据批量导入。
+2. 返回【数据库】，在 `goods` 这个 `collection` 下，点击【导入】，选择 `cloud/database/goods.json` 文件进入数据批量导入。
 
 <p align="center">
 <img 
@@ -196,7 +196,7 @@ wx.navigateTo({
 npm i --production
 ```
 
-2. 填写微信商户与微信小程序相关配置
+3. 填写微信商户与微信小程序相关配置
 新建 `cloud/functions/pay/config/index.js`，并填入小程序的 `AppId`，还有微信支付的商户号 `MCHID` 和 商户密钥 `KEY`：
 
 ```js
@@ -209,7 +209,7 @@ module.exports = {
 };
 ```
 
-3. 将下面代码，输入到 `cloud/functions/pay/index.js` 中的 `switch` 代码块中，通过此 `case`，可以进行订单的发起。
+4. 将下面代码，输入到 `cloud/functions/pay/index.js` 中的 `switch` 代码块中，通过此 `case`，可以进行订单的发起。
 
 ```js
 case 'unifiedorder': {
