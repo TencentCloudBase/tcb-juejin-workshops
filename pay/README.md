@@ -112,6 +112,13 @@ width="350px"
 src="https://ask.qcloudimg.com/draft/1011618/1vs78hlht2.png">
 </p>
 
+3. 要将 "goods" 集合的权限，设置为 "所有用户可读，仅创建者及管理员可写"。
+<p align="center">
+<img 
+width="400px"
+src="https://ask.qcloudimg.com/draft/1011618/kfufcmhwhe.png">
+</p>
+
 ### 录入商品数据
 
 1. 在云开发控制台，点击菜单栏中的 【文件管理】，然后点击左侧的【新建文件夹】，新建一个目录 `goods`，点击进入 `goods` 目录后，点击左侧的【上传文件】按钮，将小程序项目目录 `./img` 中的商品图片，都选择进行上传。
