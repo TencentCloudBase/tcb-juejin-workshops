@@ -90,6 +90,7 @@ Page({
     // 添加图片信息到数据库
     addPhotos (photos, comment) {
         // 从全局数据中读出用户信息里的照片列表
+        const db = wx.cloud.database()
         const oldPhotos = app.globalData.allData.albums[this.data.albumIndex].photos
         const albumPhotos = photos.map(photo => ({
             fileID: photo.fileID,
