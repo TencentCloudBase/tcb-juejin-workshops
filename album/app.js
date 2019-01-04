@@ -3,7 +3,7 @@ App({
     onLaunch () {
         // 初始化云函数
         wx.cloud.init({
-            env: 'heyli-9b1eec',
+            env: '',
             traceUser: true
         })
 
