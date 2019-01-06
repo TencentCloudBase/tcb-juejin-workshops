@@ -11,8 +11,8 @@
 		"newFeature": true
 	},
 	"compileType": "miniprogram",
-	"libVersion": "2.2.5",
-	"appid": "wx0df19af0220bd189",
+	"libVersion": "2.4.2",
+	"appid": "",
 	"projectname": "%E4%B8%AA%E4%BA%BA%E7%9B%B8%E5%86%8C",
 	"isGameTourist": false,
 	"cloudfunctionRoot": "cloud/functions/",
