@@ -51,26 +51,28 @@ Page({
     async getAlbums(albumsParam) {
         const albums = albumsParam || app.globalData.allData.albums
 
-        for (const album of albums) {
-            if (!album) {
-                continue
-            }
+        for (let i = 0, len = albums.length; i < len; i++) {
+          let album = albums[i]
 
-            // 相册中有照片
-            // 拿第一张照片作为相册封面
-            if (album.photos.length) {
-                const fileID = album.photos[0].fileID
+          if (!album) {
+            continue
+          }
 
-                // 获取封面的真实链接
-                const { fileList } = await wx.cloud.getTempFileURL({ fileList: [fileID] })
+          // 相册中有照片
+          // 拿第一张照片作为相册封面
+          if (album.photos.length) {
+            const fileID = album.photos[0].fileID
 
-                album.coverURL = fileList[0].tempFileURL
-                continue
-            }
+            // 获取封面的真实链接
+            const { fileList } = await wx.cloud.getTempFileURL({ fileList: [fileID] })
 
-            // 相册中没有照片
-            // 则设置为默认的相册封面
-            album.coverURL = '/images/default-cover.png'
+            album.coverURL = fileList[0].tempFileURL
+            continue
+          }
+
+          // 相册中没有照片
+          // 则设置为默认的相册封面
+          album.coverURL = '/images/default-cover.png'
         }
 
         this.setData({ albums })
